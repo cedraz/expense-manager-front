@@ -1,7 +1,5 @@
 import * as React from 'react'
 import type { Metadata } from 'next'
-import ThemeRegistry from '@/components/ThemeRegistry/ThemeRegistry'
-import { Box } from '@mui/material'
 
 export const metadata: Metadata = {
   title: 'Expense Manager',
@@ -19,9 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ThemeRegistry>
-          <Box sx={{ flexGrow: 1, background, width: '100%' }}>{children}</Box>
-        </ThemeRegistry>
+        <div>teste layout</div>
       </body>
     </html>
   )
