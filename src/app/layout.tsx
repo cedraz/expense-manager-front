@@ -1,5 +1,6 @@
 import * as React from 'react'
 import type { Metadata } from 'next'
+import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Expense Manager',
@@ -11,13 +12,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const background =
-    'linear-gradient(167deg, #A03E3E 1.02%, rgba(0, 0, 0, 0.20) 80.95%)'
 
   return (
     <html lang="en">
-      <body>
-        <div>teste layout</div>
+      <body className='bg-white text-black'>
+        {children}
       </body>
     </html>
   )

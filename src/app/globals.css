@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.home {
+    background-image: url('/tela-inicial-foto.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+}

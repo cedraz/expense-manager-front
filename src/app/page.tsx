@@ -2,11 +2,12 @@
 import * as React from 'react'
 
 export default function Home() {
-  // const theme = useTheme()
-
+  
   return (
     <>
-      <div>teste page</div>
+      <div className='home h-screen flex'>
+        
+      </div>
     </>
   )
 }
