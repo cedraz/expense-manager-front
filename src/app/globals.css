@@ -2,8 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root {
+    --red: #FF5252;
+    --blue: #5552FF;
+    --orange: #FF9052;
+}
+
 .home {
     background-image: url('/tela-inicial-foto.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+}
+
+.register {
+    background-image: url('/Cadastro.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+}
+
+.login {
+    background-image: url('/Login.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+}
+
+.fundo-padrao {
+    background-image: url('/Despesas.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+}
+
+.card {
+    background-image: url('/card.png');
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;

@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { Typography, Grid, IconButton, Divider, Box, Drawer, List, ListItemText, ListItem, Accordion, AccordionSummary, AccordionDetails, Checkbox, Modal } from '@mui/material'
+import { Typography, IconButton, Divider, Box, List, ListItem, Accordion, AccordionSummary, AccordionDetails, Checkbox, Modal, Grid } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
 // Icons
@@ -104,11 +104,16 @@ export default function Expenses() {
                           </Modal>
                         </Grid>
                       </ListItem>
+                  
+                  
                     </List>
                   </AccordionDetails>
                 </Accordion>
               </ListItem>
             </List>
+            
+            
+
           </Grid>
         </Grid>
       </Grid>
