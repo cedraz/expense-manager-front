@@ -1,58 +1,35 @@
 'use client'
 import * as React from 'react'
 
-import { Typography, Grid, IconButton, Box, Modal, Button, TextField } from '@mui/material'
+import { Typography, Grid, IconButton, Box, Modal, Button, TextField} from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
 // Icons
-import MenuIcon from '@mui/icons-material/Menu'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import WalletIcon from '@mui/icons-material/Wallet'
 import CreateIcon from '@mui/icons-material/Create'
-import { api } from '@/services/api'
+import AddIcon from '@mui/icons-material/Add'
+
 import { toast } from 'react-toastify'
 import handleMessageError from '@/utils/handleMessageError'
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
+import { getCreditCards } from '@/services/credit-cards/getCreditCards'
+import { updateCreditCard } from '@/services/credit-cards/updateCreditCard'
+import { createCreditCards } from '@/services/credit-cards/createCreditCard'
+
+import Navbar from '@/components/navbar/navbar'
+import { AddCircleOutline } from '@mui/icons-material'
 interface creditCardInterface {
   id: string;
   card_name: string;
 }
 
-const getCreditCards = async (token: string, setCreditCards: React.Dispatch<React.SetStateAction<never[]>>) => {
-  try {
-    const creditCards = await api.get('/credit-cards', {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
-    setCreditCards(creditCards.data)
-  } catch (error: any) {
-    toast.error(handleMessageError(error))
-  }
-}
-
-const updateCreditCard = async (token:string, cardId: string, cardName: string) => {
-  try {
-    await api.patch(`/credit-cards/${cardId}`, {
-      cardName: cardName
-    }, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
-
-    toast.success('Cartão atualizado com sucesso!')
-  } catch (error: any) {
-    console.log(error)
-    toast.error(handleMessageError(error))
-  }
-}
-
 export default function CreditCards() {
   const theme = useTheme()
+  const router = useRouter()
 
   const [ token, setToken ] = React.useState<string>('')
+  const [ open, setOpen ] = React.useState(false)
   const [ creditCards, setCreditCards ] = React.useState([])
   const [ selectedCardId, setSelectedCardId ] = React.useState<string | null>(null) 
   const [ newCardName, setNewCardName ] = React.useState<string>('')
@@ -62,7 +39,8 @@ export default function CreditCards() {
       const storedToken = localStorage.getItem('token')
       if (!storedToken) return
       setToken(storedToken)
-      getCreditCards(storedToken, setCreditCards)
+      
+      handleGetCreditCards(storedToken)
     }
 
   }, [setCreditCards, setToken])
@@ -87,6 +65,31 @@ export default function CreditCards() {
     p: 4,
   }
 
+  const handleGetCreditCards = async (token: string) => {
+    try {
+      const response = await getCreditCards(token)
+      setCreditCards(response)
+    } catch (error) {
+      toast.error(handleMessageError(error))
+    }
+  }
+
+  const handleCreateCreditCard = async () => {
+    try {
+      await createCreditCards(token, newCardName)
+    } catch (error) {
+      toast.error(handleMessageError(error))
+    }
+
+    setNewCardName('')
+    handleCloseCreateCreditCard()
+    window.location.reload()
+  }
+
+  const handleOpenCreateCreditCard = () => setOpen(true)
+
+  const handleCloseCreateCreditCard = () => setOpen(false)
+
   const handleOpen = (cardId: string) => {
     setSelectedCardId(cardId)
   }
@@ -96,27 +99,23 @@ export default function CreditCards() {
   }
 
   const handleSave = async (selectedCardId: string) => {
-    // Faça a requisição PUT aqui usando o valor de newCardName
-    // e atualize o estado ou realize outras operações necessárias
-    console.log(token, selectedCardId, newCardName)
-    await updateCreditCard(token, selectedCardId, newCardName)
-    // Limpe o estado e feche o modal
+    try {
+      await updateCreditCard(token, selectedCardId, newCardName)
+    } catch (error) {
+      toast.error(handleMessageError(error))
+    }
+
     setNewCardName('')
     handleClose()
+    window.location.reload()
   }
 
   return (
     <>
-      <Grid sx={{minHeight: '100vh', height: '100%'}} className='fundo-padrao'>
-        <Grid container sx={{justifyContent: 'space-between'}}>
-          <IconButton>
-            <MenuIcon />
-          </IconButton>
-          <IconButton>
-            <AccountCircleIcon />
-          </IconButton>
-        </Grid>
-        <Grid container direction={'column'} >
+      <Grid sx={{height: '100%', minHeight: '100vh'}} className='fundo-padrao'>
+        <Navbar />
+
+        <Grid container direction={'column'} sx={{display: 'flex', alignItems: 'center'}}>
 
           <Grid container direction={'column'} item xs={12} sx={{display: 'flex', alignItems: 'center'}}>
 
@@ -128,10 +127,25 @@ export default function CreditCards() {
               <Typography variant='body1' sx={{color: '#fff', position: 'absolute', bottom: 15, left: 15}}>Nome do cartão</Typography>
             </Box>
 
-            <Button variant='contained' sx={{borderRadius: '5px', mt: '10px', mb: '10px'}}>
-                Adicionar cartão
+            <Button variant='outlined' sx={{borderRadius: '5px', mt: '10px', mb: '10px'}} onClick={handleOpenCreateCreditCard}>
+              <AddIcon/> Adicionar cartão
             </Button>
 
+            <Modal open={open} onClose={handleCloseCreateCreditCard}>
+              <Box sx={style}>
+                <TextField
+                  id="outlined-basic"
+                  label="Nome do cartão"
+                  variant="outlined"
+                  sx={{mb: '15px'}}
+                  value={newCardName}
+                  onChange={(e) => setNewCardName(e.target.value)}
+                />
+                <Button variant='contained' sx={{borderRadius: '5px', mt: '10px', mb: '10px'}} onClick={() => handleCreateCreditCard()}>
+                  Salvar cartão
+                </Button>
+              </Box>
+            </Modal>
 
             {creditCards.map((creditCard: creditCardInterface) => (
               <Grid key={creditCard.id} container direction={'row'} sx={{width: '300px', borderRadius: '5px', p: '10px', mb: '15px', justifyContent: 'space-between', border: '1px solid'}}>
@@ -168,6 +182,8 @@ export default function CreditCards() {
             
 
           </Grid>
+
+          <Button href='/expenses' variant='contained' disabled={creditCards.length == 0}>Cadastrar despesas</Button>
         </Grid>
       </Grid>
     </>

@@ -11,6 +11,7 @@ import WalletIcon from '@mui/icons-material/Wallet'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import CreateIcon from '@mui/icons-material/Create'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
+import Navbar from '@/components/navbar/navbar'
 
 export default function Expenses() {
   const theme = useTheme()
@@ -39,14 +40,8 @@ export default function Expenses() {
   return (
     <>
       <Grid sx={{minHeight: '100vh', height: '100%'}} className='fundo-padrao'>
-        <Grid container sx={{justifyContent: 'space-between'}}>
-          <IconButton>
-            <MenuIcon />
-          </IconButton>
-          <IconButton>
-            <AccountCircleIcon />
-          </IconButton>
-        </Grid>
+        <Navbar />
+        
         <Grid container direction={'column'} >
 
           <Grid container direction={'column'} item xs={12} sx={{display: 'flex', alignItems: 'center'}}>
