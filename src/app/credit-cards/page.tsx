@@ -22,6 +22,7 @@ import { AddCircleOutline } from '@mui/icons-material'
 interface creditCardInterface {
   id: string;
   card_name: string;
+  user_id: string;
 }
 
 export default function CreditCards() {
@@ -30,7 +31,7 @@ export default function CreditCards() {
 
   const [ token, setToken ] = React.useState<string>('')
   const [ open, setOpen ] = React.useState(false)
-  const [ creditCards, setCreditCards ] = React.useState([])
+  const [creditCards, setCreditCards] = React.useState<creditCardInterface[]>([])
   const [ selectedCardId, setSelectedCardId ] = React.useState<string | null>(null) 
   const [ newCardName, setNewCardName ] = React.useState<string>('')
 
@@ -76,14 +77,19 @@ export default function CreditCards() {
 
   const handleCreateCreditCard = async () => {
     try {
-      await createCreditCards(token, newCardName)
+      const newCreditCard = await createCreditCards(token, newCardName)
+      toast.success('Cartão criado com sucesso!')
+
+      setCreditCards((prevCreditCards) => [
+        ...prevCreditCards,
+        { id: newCreditCard.id, card_name: newCreditCard.card_name, user_id: newCreditCard.user_id },
+      ])
     } catch (error) {
       toast.error(handleMessageError(error))
     }
 
     setNewCardName('')
     handleCloseCreateCreditCard()
-    window.location.reload()
   }
 
   const handleOpenCreateCreditCard = () => setOpen(true)
@@ -100,14 +106,22 @@ export default function CreditCards() {
 
   const handleSave = async (selectedCardId: string) => {
     try {
-      await updateCreditCard(token, selectedCardId, newCardName)
+      const newCreditCard = await updateCreditCard(token, selectedCardId, newCardName)
+      toast.success('Cartão atualizado com sucesso!')
+
+      setCreditCards((prevCreditCards) =>
+        prevCreditCards.map((creditCard) =>
+          creditCard.id === selectedCardId
+            ? { ...creditCard, card_name: newCardName }
+            : creditCard
+        )
+      )      
     } catch (error) {
       toast.error(handleMessageError(error))
     }
 
     setNewCardName('')
     handleClose()
-    window.location.reload()
   }
 
   return (
