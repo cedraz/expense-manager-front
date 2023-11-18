@@ -61,7 +61,7 @@ export default function Expenses() {
 
   const [open, setOpen] = React.useState(false)
   const [token, setToken] = React.useState<string>('')
-  const [creditCards, setCreditCards] = React.useState([])
+  const [creditCards, setCreditCards] = React.useState<creditCardWithStatementInterface[]>([])
   const [statement, setStatement] = React.useState(0)
 
   const [ expenseDescription, setExpenseDescription ] = React.useState<string>('')
@@ -100,9 +100,32 @@ export default function Expenses() {
   const handleCreateExpense = async (creditCardId: string) => {
     try {
       const amount = stringToCents(expenseAmount)
-      await createExpense(token, expenseDescription, amount, creditCardId)
+      const newExpense = await createExpense(token, expenseDescription, amount, creditCardId)
+      
       toast.success('Despesa criada com sucesso!')
-
+      setCreditCards((prevCreditCards) => {
+        return prevCreditCards.map((creditCard) => {
+          if (creditCard.id === creditCardId) {
+            // Se este é o cartão em que a despesa foi criada, atualize a lista de despesas
+            return {
+              ...(creditCard as creditCardWithStatementInterface),
+              Expenses: [
+                ...(creditCard.Expenses || []),
+                {
+                  id: newExpense.id, // Substitua pelo ID real da nova despesa
+                  amount: newExpense.amount,
+                  description: newExpense.description,
+                  date: newExpense.date, // Substitua pela data real da nova despesa
+                  credit_card_id: creditCardId,
+                },
+              ],
+            }
+          }
+          return creditCard
+        }) as creditCardWithStatementInterface[]
+      })
+      
+      
     } catch (error) {
       toast.error(handleMessageError(error))
     }
