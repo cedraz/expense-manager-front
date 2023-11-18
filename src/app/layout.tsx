@@ -1,6 +1,13 @@
+// RootLayout.tsx
 import * as React from 'react'
 import type { Metadata } from 'next'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import './globals.css'
+
+import ThemeRegistry from '@/components/ThemeRegistry/ThemeRegistry'
+import { Grid, Typography } from '@mui/material'
+import AuthProvider from '@/hooks/auth'
 
 export const metadata: Metadata = {
   title: 'Expense Manager',
@@ -10,13 +17,21 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-
   return (
     <html lang="en">
-      <body className='bg-white text-black'>
-        {children}
+      <body className="bg-white text-black">
+        <ThemeRegistry>
+          <AuthProvider>
+            <ToastContainer />
+            {children}
+            <Grid item xs={12} sx={{position: 'fixed', bottom: 20, left: 10}}>
+              <Typography variant='caption' sx={{mt: '10px', alignSelf: 'flex-end', mb: '5px'}}>Version 1.0</Typography>
+            </Grid>
+          </AuthProvider>
+          
+        </ThemeRegistry>
       </body>
     </html>
   )
