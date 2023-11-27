@@ -19,6 +19,7 @@ import { format } from 'date-fns'
 import { createExpense } from '@/services/credit-cards/createExpense'
 import { stringToCents } from '@/utils/stringToCents'
 import { centsToString } from '@/utils/centsToString'
+import { deleteExpense } from '@/services/credit-cards/delete-expense'
 
 interface expenseInterface {
   id: string;
@@ -61,7 +62,7 @@ export default function Expenses() {
 
   const [open, setOpen] = React.useState(false)
   const [token, setToken] = React.useState<string>('')
-  const [creditCards, setCreditCards] = React.useState([])
+  const [creditCards, setCreditCards] = React.useState<creditCardWithStatementInterface[]>([])
   const [statement, setStatement] = React.useState(0)
 
   const [ expenseDescription, setExpenseDescription ] = React.useState<string>('')
@@ -93,6 +94,7 @@ export default function Expenses() {
   const handleOpenCreateExpense = (cardId: string) => {
     setSelectedCardId(cardId)
   }
+
   const handleCloseCreateExpense = () => {
     setSelectedCardId(null)
   }
@@ -100,14 +102,60 @@ export default function Expenses() {
   const handleCreateExpense = async (creditCardId: string) => {
     try {
       const amount = stringToCents(expenseAmount)
-      await createExpense(token, expenseDescription, amount, creditCardId)
+      const newExpense = await createExpense(token, expenseDescription, amount, creditCardId)
+  
+      setCreditCards((prevCreditCards) => {
+        // Mapeia sobre os cartões existentes
+        return prevCreditCards.map((creditCard) => {
+          if (creditCard.id === creditCardId) {
+            // Se for o cartão correto, atualiza o statement e adiciona a nova despesa
+            return {
+              ...creditCard,
+              Expenses: [...creditCard.Expenses, newExpense],
+              statement: (creditCard.statement || 0) + amount,
+            }
+          }
+          // Se não for o cartão correto, mantém inalterado
+          return creditCard
+        })
+      })
+  
+      setSelectedCardId(null)
+      setExpenseDescription('')
+      setExpenseAmount('')
       toast.success('Despesa criada com sucesso!')
-
     } catch (error) {
       toast.error(handleMessageError(error))
     }
   }
 
+  const handleDeleteExpense = async (expenseId: string) => {
+    try {
+      await deleteExpense(token, expenseId)
+  
+      setCreditCards((prevCreditCards) => {
+        return prevCreditCards.map((creditCard) => {
+          if (creditCard.Expenses.some((expense) => expense.id === expenseId)) {
+            const newExpenses = creditCard.Expenses.filter((expense) => expense.id !== expenseId)
+            const newStatement = newExpenses.reduce((acc, expense) => acc + expense.amount, 0)
+  
+            return {
+              ...creditCard,
+              Expenses: newExpenses,
+              statement: newStatement,
+            }
+          }
+  
+          return creditCard
+        })
+      })
+  
+      toast.success('Despesa deletada com sucesso!')
+    } catch (error) {
+      toast.error(handleMessageError(error))
+    }
+  }
+  
   const handleGetExpenses = async (token: string) => {
     try {
       const creditCards = await getCreditCards(token)
@@ -137,8 +185,6 @@ export default function Expenses() {
   return (
     <>
       <Grid sx={{minHeight: '100vh', height: '100%'}} className='fundo-padrao'>
-        <Navbar />
-
         <Grid container direction={'column'} >
 
           <Grid container direction={'column'} item xs={12} sx={{display: 'flex', alignItems: 'center'}}>
@@ -178,18 +224,19 @@ export default function Expenses() {
                         {creditCard.Expenses.map((expense: expenseInterface) => (
                           <ListItem sx={{p: '0', mt: '10px', mb: '20px'}} key={expense.id}>
                             <Grid container sx={{alignItems: 'center', justifyContent: 'space-between'}}>
-                              <Grid item container direction={'row'} xs={9.5} sx={{pr: '10px', overflow: 'hidden'}}>
+                              <Grid item container direction={'row'} xs={8} sx={{pr: '10px', overflow: 'hidden'}}>
                                 {/* <Checkbox sx={{p: '0'}}/> */}
                                 <Box sx={{ml: '10px'}}>
                                   <Typography variant='body1' sx={{fontSize: '15px'}}>{expense.description}</Typography>
                                   <Typography variant='caption' sx={{fontSize: '12px'}}>{dateFormatter(expense.date)}</Typography>
                                 </Box>
                               </Grid>
-                              <Grid item container direction={'row'} xs={2.5} justifyContent={'space-between'}>
+                              <Grid item container direction={'row'} xs={4} justifyContent={'space-between'} alignItems={'center'}>
                                 <Typography variant='body2' sx={{fontSize: '14px', pr: '2px'}}>{centsToString(expense.amount)}</Typography>
-                                {/* <IconButton onClick={handleOpen} sx={{p: '0 !important'}}>
-                                  <CreateIcon sx={{fontSize: '20px'}}/>
-                                </IconButton> */}
+                                <IconButton onClick={() => handleDeleteExpense(expense.id)} sx={{p: '0 !important'}}>
+                                  <DeleteForeverIcon sx={{fontSize: '30px', color: 'red'}}/>
+                                </IconButton>
+                                
                               </Grid>
                               {/* <Modal 
                                 open={open}

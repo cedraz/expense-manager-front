@@ -8,6 +8,7 @@ import './globals.css'
 import ThemeRegistry from '@/components/ThemeRegistry/ThemeRegistry'
 import { Grid, Typography } from '@mui/material'
 import AuthProvider from '@/hooks/auth'
+import Navbar from '@/components/navbar/navbar'
 
 export const metadata: Metadata = {
   title: 'Expense Manager',
@@ -25,6 +26,7 @@ export default function RootLayout({
         <ThemeRegistry>
           <AuthProvider>
             <ToastContainer />
+            <Navbar/>
             {children}
             <Grid item xs={12} sx={{position: 'fixed', bottom: 20, left: 10}}>
               <Typography variant='caption' sx={{mt: '10px', alignSelf: 'flex-end', mb: '5px'}}>Version 1.0</Typography>
