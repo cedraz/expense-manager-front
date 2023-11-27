@@ -103,7 +103,6 @@ export default function Expenses() {
     try {
       const amount = stringToCents(expenseAmount)
       const newExpense = await createExpense(token, expenseDescription, amount, creditCardId)
-  
       setCreditCards((prevCreditCards) => {
         // Mapeia sobre os cartões existentes
         return prevCreditCards.map((creditCard) => {
