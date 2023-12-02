@@ -189,7 +189,7 @@ export default function Expenses() {
 
           <Grid container direction={'column'} item xs={12} sx={{display: 'flex', alignItems: 'center'}}>
 
-            <Typography variant='h4' sx={{fontWeight: 'bold', mb: '15px'}}>
+            <Typography variant='h4' sx={{fontWeight: 'bold', mb: '15px', fontSize: '40px'}}>
               <span style={blue}>DES</span><span style={red}>PE</span><span style={orange}>SAS</span>
             </Typography>
 

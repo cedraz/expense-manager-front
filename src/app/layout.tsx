@@ -7,6 +7,8 @@ import 'react-toastify/dist/ReactToastify.css'
 
 // CSS
 import './globals.css'
+import { Montserrat } from 'next/font/google'
+import { Roboto } from 'next/font/google'
 
 // Hooks
 import { usePathname } from 'next/navigation'
@@ -17,6 +19,11 @@ import Navbar from '@/components/navbar/navbar'
 
 // Material UI
 import ThemeRegistry from '@/components/ThemeRegistry/ThemeRegistry'
+
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  display: 'swap',
+})
 
 export default function RootLayout({
   children,
@@ -32,7 +39,9 @@ export default function RootLayout({
           <AuthProvider>
             <ToastContainer />
             {pathname !== '/' && pathname !== '/login' && pathname !== '/register' && <Navbar />}
-            {children}
+            <div className={montserrat.className}>
+              {children}
+            </div>
           </AuthProvider>
           
         </ThemeRegistry>

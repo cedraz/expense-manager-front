@@ -17,8 +17,8 @@ export default function Home() {
     <>
       <Grid container direction={'column'} className='home' sx={{height: '100vh', justifyContent: 'center', alignItems: 'center'}}>
         <Grid container direction={'column'} item xs={12} sx={{display: 'flex', alignItems: 'center', position: 'absolute', bottom: 0, mb: '25px'}}>
-          <Typography variant='h4' sx={{fontWeight: 'bold'}}>GERENCIADOR</Typography>
-          <Typography variant='h4' sx={{fontWeight: 'bold', mb: '15px'}}>
+          <Typography variant='h4' sx={{fontWeight: 'bold', fontSize: '40px'}}>GERENCIADOR</Typography>
+          <Typography variant='h4' sx={{fontWeight: 'bold', mb: '15px', fontSize: '40px'}}>
             <span style={black}>DE</span> <span style={red}>DES</span><span style={blue}>PE</span><span style={orange}>SAS</span>
           </Typography>
 

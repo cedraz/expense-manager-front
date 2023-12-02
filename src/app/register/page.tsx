@@ -59,8 +59,8 @@ export default function Register() {
 
         <Grid container direction={'column'} item xs={12} sx={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
 
-          <Typography variant='h4' sx={{fontWeight: 'bold'}}>FAÇA SEU</Typography>
-          <Typography variant='h4' sx={{fontWeight: 'bold', mb: '15px'}}>
+          <Typography variant='h4' sx={{fontWeight: 'bold', fontSize: '40px'}}>FAÇA SEU</Typography>
+          <Typography variant='h4' sx={{fontWeight: 'bold', mb: '15px', fontSize: '40px'}}>
             <span style={red}>CA</span><span style={blue}>DAS</span><span style={orange}>TRO</span>
           </Typography>
 

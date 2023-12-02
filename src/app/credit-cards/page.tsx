@@ -148,7 +148,7 @@ export default function CreditCards() {
 
           <Grid container direction={'column'} item xs={12} sx={{display: 'flex', alignItems: 'center'}}>
 
-            <Typography variant='h4' sx={{fontWeight: 'bold', mb: '15px'}}>
+            <Typography variant='h4' sx={{fontWeight: 'bold', mb: '15px', fontSize: '40px'}}>
               <span style={blue}>CAD</span><span style={red}>AST</span><span style={orange}>RAR</span>
             </Typography>
 
