@@ -1,12 +1,9 @@
 'use client'
 import * as React from 'react'
 
+// Material UI
 import { Typography, IconButton, Divider, Box, List, ListItem, Accordion, AccordionSummary, AccordionDetails, Checkbox, Modal, Grid } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-
-// Icons
-import MenuIcon from '@mui/icons-material/Menu'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import WalletIcon from '@mui/icons-material/Wallet'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import CreateIcon from '@mui/icons-material/Create'

@@ -12,8 +12,6 @@ import { api } from '@/services/api'
   
 import { useRouter, usePathname } from 'next/navigation'
   
-import handleMessageError from '../utils/handleMessageError'
-  
   interface ISignCredentials {
     email: string;
     password: string;

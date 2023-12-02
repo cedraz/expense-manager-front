@@ -1,25 +1,26 @@
 'use client'
 import * as React from 'react'
 
+// Material UI
 import { Typography, Grid, IconButton, Divider, Box, List, ListItem, Accordion, AccordionSummary, AccordionDetails, Checkbox, Modal, Button, TextField } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-
-// Icons
 import WalletIcon from '@mui/icons-material/Wallet'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import CreateIcon from '@mui/icons-material/Create'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import AddIcon from '@mui/icons-material/Add'
 
-import Navbar from '@/components/navbar/navbar'
+// Toastify
 import { toast } from 'react-toastify'
-import handleMessageError from '@/utils/handleMessageError'
+
+// Services
 import { getCreditCards } from '@/services/credit-cards/getCreditCards'
-import { format } from 'date-fns'
 import { createExpense } from '@/services/credit-cards/createExpense'
+import { deleteExpense } from '@/services/credit-cards/delete-expense'
+
+// Utils
+import handleMessageError from '@/utils/handleMessageError'
 import { stringToCents } from '@/utils/stringToCents'
 import { centsToString } from '@/utils/centsToString'
-import { deleteExpense } from '@/services/credit-cards/delete-expense'
 
 interface expenseInterface {
   id: string;

@@ -1,9 +1,9 @@
 'use client'
 import * as React from 'react'
-import { Box, Button, Divider, Drawer, Grid, IconButton, List, ListItem } from '@mui/material'
 
+// Material UI
+import { Box, Button, Drawer, Grid, IconButton, List, ListItem } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 
 export default function Navbar() {
   const [open, setOpen] = React.useState(false)

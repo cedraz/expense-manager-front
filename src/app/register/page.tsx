@@ -1,12 +1,22 @@
 'use client'
 import * as React from 'react'
+
+// React Hook Form
 import { useForm, SubmitHandler } from 'react-hook-form'
-import { Button, FormControl, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField, Typography } from '@mui/material'
-import { useTheme } from '@mui/material/styles'
+
+// Toastify
 import { toast } from 'react-toastify'
-import { api } from '@/services/api'
+
+// Material UI
+import { Button, FormControl, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField, Typography } from '@mui/material'
 import { VisibilityOff, Visibility } from '@mui/icons-material'
+import { useTheme } from '@mui/material/styles'
+
+// Services
+import { api } from '@/services/api'
 import handleMessageError from '@/utils/handleMessageError'
+
+// Hooks
 import { useRouter } from 'next/navigation'
 
 type Inputs = {
