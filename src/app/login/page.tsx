@@ -1,8 +1,14 @@
 'use client'
 import * as React from 'react'
+
+// React Hook Form
 import { useForm, SubmitHandler } from 'react-hook-form'
+
+// Toastify
 import { Button, Grid, TextField, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
+
+// Hooks
 import { useAuth } from '@/hooks/auth'
 
 type Inputs = {
@@ -31,8 +37,8 @@ export default function Login() {
 
         <Grid container direction={'column'} item xs={12} sx={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
 
-          <Typography variant='h4' sx={{fontWeight: 'bold'}}>FAÇA SEU</Typography>
-          <Typography variant='h4' sx={{fontWeight: 'bold', mb: '15px'}}>
+          <Typography variant='h4' sx={{fontWeight: 'bold', fontSize: '40px'}}>FAÇA SEU</Typography>
+          <Typography variant='h4' sx={{fontWeight: 'bold', mb: '15px', fontSize: '40px'}}>
             <span style={red}>CA</span><span style={blue}>DAS</span><span style={orange}>TRO</span>
           </Typography>
 

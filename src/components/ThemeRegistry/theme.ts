@@ -49,13 +49,6 @@ const theme = createTheme({
         },
       },
     },
-    MuiTextField: {
-      styleOverrides: {
-        root: {
-
-        },
-      },
-    }
   },
 })
 
