@@ -24,10 +24,13 @@ export default function Navbar() {
               <Button href='/' variant='contained' sx={{width: '100%'}}>Página Inicial</Button>
             </ListItem>
             <ListItem>
+              <Button href='/credit-cards' variant='contained' sx={{width: '100%'}}>Cartões</Button>
+            </ListItem>
+            <ListItem>
               <Button href='/expenses' variant='contained' sx={{width: '100%'}}>Despesas</Button>
             </ListItem>
             <ListItem>
-              <Button href='/credit-cards' variant='contained' sx={{width: '100%'}}>Cartões</Button>
+              <Button href='/charges' variant='contained' sx={{width: '100%'}}>Cobranças</Button>
             </ListItem>
           </List>
         </Box>

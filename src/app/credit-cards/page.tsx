@@ -45,7 +45,7 @@ export default function CreditCards() {
       handleGetCreditCards(storedToken)
     }
 
-  }, [setCreditCards, setToken])
+  }, [setToken])
 
   const red = {color: theme.colors.red}
   const blue = {color: theme.colors.blue }
@@ -140,7 +140,6 @@ export default function CreditCards() {
     }
   }
   
-
   return (
     <>
       <Grid sx={{height: '100%', minHeight: '100vh'}} className='fundo-padrao'>
@@ -178,7 +177,7 @@ export default function CreditCards() {
                   <WalletIcon sx={{mr: '15px'}}/>
                   <Typography variant='body1'>{creditCard.card_name}</Typography>
                 </Grid>
-                <Grid item xs={3.5} direction={'row'}>
+                <Grid item xs={3.5} container direction={'row'}>
                   <IconButton onClick={() => handleOpen(creditCard.id)}>
                     <CreateIcon />
                   </IconButton>
