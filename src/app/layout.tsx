@@ -8,7 +8,6 @@ import 'react-toastify/dist/ReactToastify.css'
 // CSS
 import './globals.css'
 import { Montserrat } from 'next/font/google'
-import { Roboto } from 'next/font/google'
 
 // Hooks
 import { usePathname } from 'next/navigation'

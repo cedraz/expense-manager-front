@@ -22,25 +22,12 @@ import handleMessageError from '@/utils/handleMessageError'
 import { stringToCents } from '@/utils/stringToCents'
 import { centsToString } from '@/utils/centsToString'
 
-interface expenseInterface {
-  id: string;
-  amount: number;
-  description: string;
-  date: string;
-  credit_card_id: string;
-}
-interface creditCardInterface {
-  id: string;
-  card_name: string;
-  Expenses: expenseInterface[];
-}
-
-interface creditCardWithStatementInterface {
-  id: string;
-  card_name: string;
-  statement: number;
-  Expenses: expenseInterface[];
-}
+// Interfaces
+import { 
+  creditCardInterface, 
+  creditCardWithStatementInterface, 
+  expenseInterface
+} from '../../types/interfaces'
 
 export default function Expenses() {
   const theme = useTheme()
@@ -103,7 +90,19 @@ export default function Expenses() {
   const handleCreateExpense = async (creditCardId: string) => {
     try {
       const amount = stringToCents(expenseAmount)
+
+      if (!amount) {
+        toast.error('Digite um valor válido.')
+        return
+      }
+
+      if (expenseDescription == '' || expenseDescription == undefined) {
+        toast.error('Digite uma descrição válida. Mínimo de 1 e Máximo de 40 caracteres.')
+        return
+      }
+
       const newExpense = await createExpense(token, expenseDescription, amount, creditCardId)
+
       setCreditCards((prevCreditCards) => {
         // Mapeia sobre os cartões existentes
         return prevCreditCards.map((creditCard) => {
@@ -123,7 +122,6 @@ export default function Expenses() {
       setSelectedCardId(null)
       setExpenseDescription('')
       setExpenseAmount('')
-      toast.success('Despesa criada com sucesso!')
     } catch (error) {
       toast.error(handleMessageError(error))
     }
