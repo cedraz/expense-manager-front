@@ -8,7 +8,6 @@ import 'react-toastify/dist/ReactToastify.css'
 // CSS
 import './globals.css'
 import { Montserrat } from 'next/font/google'
-import { Roboto } from 'next/font/google'
 
 // Hooks
 import { usePathname } from 'next/navigation'
@@ -37,7 +36,10 @@ export default function RootLayout({
       <body className="bg-white text-black">
         <ThemeRegistry>
           <AuthProvider>
-            <ToastContainer />
+            <ToastContainer 
+              position="top-right"
+              autoClose={3000}
+              limit={1}/>
             {pathname !== '/' && pathname !== '/login' && pathname !== '/register' && <Navbar />}
             <div className={montserrat.className}>
               {children}

@@ -10,7 +10,7 @@ export function stringToCents(valueString: string) {
   
   // Validar se é um número
   if (isNaN(floatValue)) {
-    throw new Error('Valor inválido')
+    return false
   }
   
   // Converter para centavos
