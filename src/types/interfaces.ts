@@ -19,3 +19,8 @@ export interface creditCardWithStatementInterface {
     statement: number;
     Expenses: expenseInterface[];
 }
+
+export interface userInterface {
+    name: string;
+    email: string;
+}
