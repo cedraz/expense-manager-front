@@ -1,7 +1,7 @@
 import { api } from '../api'
 
 export async function updateCreditCard(token:string, cardId: string, cardName: string) {
-  const response = await api.patch(`/credit-cards/${cardId}`, {
+  const response = await api.put(`/credit-cards/${cardId}`, {
     cardName: cardName
   }, {
     headers: {
