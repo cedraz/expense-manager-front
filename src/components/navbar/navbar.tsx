@@ -12,26 +12,42 @@ export default function Navbar() {
     setOpen(!open)
   }
 
+  const links = [
+    {
+      name: 'Página Inicial',
+      href: '/'
+    },
+    {
+      name: 'Cartões',
+      href: '/credit-cards'
+    },
+    {
+      name: 'Despesas',
+      href: '/expenses'
+    },
+    {
+      name: 'Cobranças',
+      href: '/charges'
+    },
+    {
+      name: 'Perfil',
+      href: '/profile'
+    }
+  ]
+
   return (
-    <Grid container sx={{justifyContent: 'space-between'}}>
+    <Grid container sx={{justifyContent: 'space-between', position: 'fixed'}}>
       <IconButton onClick={toggleDrawer}>
         <MenuIcon />
       </IconButton>
       <Drawer anchor={'left'} open={open} onClose={toggleDrawer}>
         <Box>
           <List>
-            <ListItem>
-              <Button href='/' variant='contained' sx={{width: '100%'}}>Página Inicial</Button>
-            </ListItem>
-            <ListItem>
-              <Button href='/credit-cards' variant='contained' sx={{width: '100%'}}>Cartões</Button>
-            </ListItem>
-            <ListItem>
-              <Button href='/expenses' variant='contained' sx={{width: '100%'}}>Despesas</Button>
-            </ListItem>
-            <ListItem>
-              <Button href='/charges' variant='contained' sx={{width: '100%'}}>Cobranças</Button>
-            </ListItem>
+            {links.map((link, index) => (
+              <ListItem key={index}>
+                <Button variant='contained' href={link.href} sx={{width: '100%'}}>{link.name}</Button>
+              </ListItem>
+            ))}
           </List>
         </Box>
       </Drawer>
