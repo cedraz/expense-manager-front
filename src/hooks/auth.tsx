@@ -67,8 +67,7 @@ export default function AuthProvider({
         route.push('/credit-cards')
       } catch (error) {
         toast.update(toastId, {
-          render:
-              'Erro ao acessar. Verifique suas credenciais ou tente mais tarde',
+          render: 'Usuário ou senha incorretos.',
           type: 'error',
           autoClose: 5000,
           isLoading: false,

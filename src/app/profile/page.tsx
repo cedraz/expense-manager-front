@@ -1,0 +1,115 @@
+'use client'
+import * as React from 'react'
+
+// Material UI
+import { Typography, Grid, TextField, Stack, Button } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
+
+// Utils
+import handleMessageError from '@/utils/handleMessageError'
+
+// Services
+import { profile } from '@/services/users/profile'
+import { updateProfile } from '@/services/users/update-profile'
+
+//Toastfy
+import { toast } from 'react-toastify'
+import { userInterface } from '@/types/interfaces'
+
+export default function Expenses() {
+  const theme = useTheme()
+
+  const red = {color: theme.colors.red}
+  const blue = {color: theme.colors.blue }
+  const orange = {color: theme.colors.orange }
+
+  const [ token, setToken ] = React.useState<string>('')
+  const [ user, setUser ] = React.useState<userInterface>({name: '', email: ''})
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedToken = localStorage.getItem('token')
+
+      if (!storedToken) {
+        toast.error('Erro ao carregar os dados do usuário.')
+        return
+      }
+
+      setToken(storedToken)
+      handleProfile(storedToken)
+    }
+  }, [])
+
+  const handleSubmit = async () => {
+    try {
+      if (user.name === '') {
+        toast.error('O campo nome é obrigatório.')
+        return
+      }
+
+      if (user.email === '') {
+        toast.error('O campo email é obrigatório.')
+        return
+      }
+
+      await updateProfile(token, user)
+      toast.success('Perfil atualizado com sucesso.')
+    } catch (error) {
+      toast.error(handleMessageError(error))
+    }
+  }
+
+  const handleProfile = async (token: string) => {
+    try {
+      const response = await profile(token)
+      const user = {
+        name: response.name,
+        email: response.email,
+        password: ''
+      }
+
+      setUser(user)
+    } catch (error) {
+      console.error(error)
+      handleMessageError(error)
+    }
+  }
+
+  return (
+    <>
+      <Grid container sx={{minHeight: '100vh', height: '100%'}} className='fundo-padrao'>
+        
+        <Grid container direction={'column'} alignItems={'center'}>
+          <Typography variant='h4' sx={{fontWeight: 'bold', mb: '15px', mt: '30px', fontSize: '40px'}}>
+            <span style={blue}>PE</span><span style={red}>RF</span><span style={orange}>IL</span>
+          </Typography>
+
+          <Stack spacing={2} sx={{
+            width: '100%', 
+            display: 'flex',
+            justifyContent: 'center',
+            maxWidth: '300px',
+            mt: '60px'
+          }}>
+            <TextField 
+              label="Nome"
+              value={user.name}
+              onChange={(e) => setUser({...user, name: e.target.value})}
+            ></TextField>
+
+            <TextField
+              label="Email"
+              value={user.email}
+              onChange={(e) => setUser({...user, email: e.target.value})}
+            ></TextField>
+
+            <Button variant='contained' onClick={handleSubmit}>
+                  Atualizar perfil
+            </Button>
+          </Stack>
+          
+        </Grid>
+      </Grid>
+    </>
+  )
+}
