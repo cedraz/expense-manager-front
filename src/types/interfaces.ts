@@ -7,6 +7,15 @@ export interface expenseInterface {
     selected: boolean;
 }
 
+export interface chargeInterface {
+    id: string;
+    amount: number;
+    description: string;
+    date: string;
+    user_id: string;
+    selected: boolean;
+  }
+
 export interface creditCardInterface {
     id: string;
     card_name: string;
