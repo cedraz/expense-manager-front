@@ -18,17 +18,11 @@ import { getCharges } from '@/services/charges/get-charges'
 import { createCharge } from '@/services/charges/create-charge'
 import { deleteManyCharges } from '@/services/charges/delete-many-charges'
 
-//Toastfy
+//Toastify
 import { toast } from 'react-toastify'
 
-interface chargeInterface {
-  id: string;
-  amount: number;
-  description: string;
-  date: string;
-  user_id: string;
-  selected: boolean;
-}
+// Interfaces
+import { chargeInterface } from '@/types/interfaces'
 
 export default function Expenses() {
   const theme = useTheme()
@@ -50,8 +44,8 @@ export default function Expenses() {
   }
 
   const [ token, setToken ] = React.useState<string>('')
-  const [open, setOpen] = React.useState(false)
-  const [charges, setCharges] = React.useState<chargeInterface[]>([])
+  const [ open, setOpen ] = React.useState(false)
+  const [ charges, setCharges ] = React.useState<chargeInterface[]>([])
   const [ newChargeDescription, setNewChargeDescription ] = React.useState<string>('')
   const [ newChargeAmount, setNewChargeAmount ] = React.useState<string>('')
   const [ isAllSelected, setIsAllSelected ] = React.useState<boolean>(false)

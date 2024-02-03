@@ -2,25 +2,26 @@
 import * as React from 'react'
 
 // Material UI
-import { Typography, Grid, IconButton, Divider, Box, List, ListItem, Accordion, AccordionSummary, AccordionDetails, Checkbox, Modal, Button, TextField } from '@mui/material'
+import { Typography, Grid, IconButton, Divider, Box, List, ListItem, Accordion, AccordionSummary, AccordionDetails, Checkbox, Modal, Button, TextField, Card } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import WalletIcon from '@mui/icons-material/Wallet'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import AddIcon from '@mui/icons-material/Add'
 
-// Toastify
-import { toast } from 'react-toastify'
+// Utils
+import handleMessageError from '@/utils/handleMessageError'
+import { stringToCents } from '@/utils/stringToCents'
+import { centsToString } from '@/utils/centsToString'
 
 // Services
 import { getCreditCards } from '@/services/credit-cards/getCreditCards'
 import { createExpense } from '@/services/expenses/createExpense'
 import { deleteExpense } from '@/services/expenses/delete-expense'
+import { deleteManyExpense } from '@/services/expenses/delete-many-expenses'
 
-// Utils
-import handleMessageError from '@/utils/handleMessageError'
-import { stringToCents } from '@/utils/stringToCents'
-import { centsToString } from '@/utils/centsToString'
+// Toastify
+import { toast } from 'react-toastify'
 
 // Interfaces
 import { 
@@ -28,6 +29,9 @@ import {
   creditCardWithStatementInterface, 
   expenseInterface
 } from '../../types/interfaces'
+import { dateFormatter } from '@/utils/dateFormatter'
+import { blue, red, orange } from '@mui/material/colors'
+import style from 'styled-jsx/style'
 
 export default function Expenses() {
   const theme = useTheme()
@@ -48,10 +52,11 @@ export default function Expenses() {
     p: 4,
   }
 
-  const [open, setOpen] = React.useState(false)
-  const [token, setToken] = React.useState<string>('')
-  const [creditCards, setCreditCards] = React.useState<creditCardWithStatementInterface[]>([])
-  const [statement, setStatement] = React.useState(0)
+  // const [open, setOpen] = React.useState(false)
+  const [ token, setToken ] = React.useState<string>('')
+  const [ creditCards, setCreditCards ] = React.useState<creditCardWithStatementInterface[]>([])
+  const [ selectedExpenses, setSelectedExpenses ] = React.useState<string[]>([])
+  const [ statement, setStatement ] = React.useState(0)
 
   const [ expenseDescription, setExpenseDescription ] = React.useState<string>('')
   const [ expenseAmount, setExpenseAmount ] = React.useState<string>('')
@@ -76,8 +81,8 @@ export default function Expenses() {
     }).format(newDate)
   }
 
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
+  // const handleOpen = () => setOpen(true)
+  // const handleClose = () => setOpen(false)
 
   const handleOpenCreateExpense = (cardId: string) => {
     setSelectedCardId(cardId)
@@ -118,6 +123,8 @@ export default function Expenses() {
           return creditCard
         })
       })
+
+      setStatement((prevStatement) => prevStatement + amount)
   
       setSelectedCardId(null)
       setExpenseDescription('')
@@ -127,54 +134,133 @@ export default function Expenses() {
     }
   }
 
-  const handleDeleteExpense = async (expenseId: string) => {
+  // Função para deletar uma despesa (não é mais utilizada)
+  // const handleDeleteExpense = async (expenseId: string) => {
+  //   try {
+  //     await deleteExpense(token, expenseId)
+  
+  //     setCreditCards((prevCreditCards) => {
+  //       return prevCreditCards.map((creditCard) => {
+  //         if (creditCard.Expenses.some((expense) => expense.id === expenseId)) {
+  //           const newExpenses = creditCard.Expenses.filter((expense) => expense.id !== expenseId)
+  //           const newStatement = newExpenses.reduce((acc, expense) => acc + expense.amount, 0)
+  
+  //           return {
+  //             ...creditCard,
+  //             Expenses: newExpenses,
+  //             statement: newStatement,
+  //           }
+  //         }
+  
+  //         return creditCard
+  //       })
+  //     })
+  
+  //     toast.success('Despesa deletada com sucesso!')
+  //   } catch (error) {
+  //     toast.error(handleMessageError(error))
+  //   }
+  // }
+
+  const handleDeleteManyExpenses = async () => {
+    const expensesToDelete = creditCards.reduce<expenseInterface[]>((acc, creditCard) => {
+      return acc.concat(creditCard.Expenses.filter((expense) => expense.selected))
+    }, [])
+
     try {
-      await deleteExpense(token, expenseId)
+      const expensesToDeleteIds = expensesToDelete.map(expense => expense.id)
+
+      const response = await deleteManyExpense(token, expensesToDeleteIds)
   
       setCreditCards((prevCreditCards) => {
-        return prevCreditCards.map((creditCard) => {
-          if (creditCard.Expenses.some((expense) => expense.id === expenseId)) {
-            const newExpenses = creditCard.Expenses.filter((expense) => expense.id !== expenseId)
-            const newStatement = newExpenses.reduce((acc, expense) => acc + expense.amount, 0)
-  
-            return {
-              ...creditCard,
-              Expenses: newExpenses,
-              statement: newStatement,
+        const updatedCreditCards = prevCreditCards.map((creditCard) => {
+          const valuesToDelete = expensesToDelete.reduce((acc, expense) => {
+            if (creditCard.id === expense.credit_card_id) {
+              return acc + expense.amount
             }
+            return acc
+          }, 0)
+      
+          return {
+            ...creditCard,
+            Expenses: creditCard.Expenses.filter((expense) => !expensesToDelete.some(expToDelete => expToDelete.id === expense.id)),
+            statement: creditCard.statement - valuesToDelete,
           }
-  
-          return creditCard
         })
+      
+        const totalStatement = updatedCreditCards.reduce((acc, creditCard) => acc + creditCard.statement, 0)
+        setStatement(totalStatement)
+      
+        return updatedCreditCards
       })
   
-      toast.success('Despesa deletada com sucesso!')
+      toast.success(`${response.count} despesa(s) deletada(s) com sucesso!`)
     } catch (error) {
       toast.error(handleMessageError(error))
     }
+  }
+
+  const isAtLeastOneSelected = () => {
+    let isSelected = false
+    creditCards.forEach((creditCard) => {
+      if (creditCard.Expenses.some((expense) => expense.selected)) {
+        isSelected = true
+      }
+    })
+    return isSelected
+  }
+
+  const handleCheckBoxChange = (expenseId: string, isSelected: boolean) => {
+    const newCreditCards = creditCards.map((creditCard) => {
+      if (creditCard.Expenses.some((expense) => expense.id === expenseId)) {
+        return {
+          ...creditCard,
+          Expenses: creditCard.Expenses.map((expense) => {
+            if (expense.id === expenseId) {
+              return {
+                ...expense,
+                selected: isSelected,
+              }
+            }
+            return expense
+          }),
+        }
+      }
+      return creditCard
+    })
+
+    setCreditCards(newCreditCards)
   }
   
   const handleGetExpenses = async (token: string) => {
     try {
       const creditCards = await getCreditCards(token)
 
-      const creditCardWithStatement = creditCards.map((creditCard: creditCardInterface) => {
+      const newCreditCards = creditCards.map((creditCard: creditCardInterface) => {
         const creditCardStatement = creditCard.Expenses.reduce((accExpenses: number, expense: expenseInterface) => {
           return accExpenses + expense.amount
         }, 0)
 
+
+
         return {
           ...creditCard,
-          statement: creditCardStatement
+          statement: creditCardStatement,
+          Expenses: creditCard.Expenses.map((expense: expenseInterface) => {
+            return {
+              ...expense,
+              selected: false,
+            }
+          })
         }
       })
 
-      const totalStatement = creditCardWithStatement.reduce((acc: number, creditCard: creditCardWithStatementInterface) => {
+      const totalStatement = newCreditCards.reduce((acc: number, creditCard: creditCardWithStatementInterface) => {
         return acc + creditCard.statement
       }, 0)
 
       setStatement(totalStatement)
-      setCreditCards(creditCardWithStatement)
+      setCreditCards(newCreditCards)
     } catch (error) {
       toast.error(handleMessageError(error))
     }
@@ -192,19 +278,22 @@ export default function Expenses() {
             </Typography>
 
             <List sx={{width: '100%'}}>
-              {/* <ListItem sx={{justifyContent: 'space-between'}}>
-                <Grid container direction={'row'} alignItems={'center'}>
+              <ListItem sx={{display: 'flex', justifyContent: 'flex-end'}}>
+                {/* <Grid container direction={'row'} alignItems={'center'}>
                   <Checkbox />
                   <Typography variant='body2' sx={{ml: '15px'}}>Selecionar todos</Typography>
-                </Grid>
-                <IconButton>
+                </Grid> */}
+                
+                <Typography variant='body2'>Remover despesas</Typography>
+                <IconButton disabled={!isAtLeastOneSelected()} color={'error'} onClick={handleDeleteManyExpenses}>
                   <DeleteForeverIcon/>
                 </IconButton>
-              </ListItem> */}
+              </ListItem>
               <Divider sx={{mb: '10px'}}/>
               <ListItem>
                 <Typography variant='body1' sx={{fontWeight: 'bold'}}>Fatura total: {centsToString(statement)}</Typography>
               </ListItem>
+
               {creditCards.map((creditCard: creditCardWithStatementInterface) => (
                 <ListItem sx={{width: '100%'}} key={creditCard.id}>
                   <Accordion sx={{mb: '25px', width: '100%'}}>
@@ -223,17 +312,19 @@ export default function Expenses() {
                           <ListItem sx={{p: '0', mt: '10px', mb: '20px'}} key={expense.id}>
                             <Grid container sx={{alignItems: 'center', justifyContent: 'space-between'}}>
                               <Grid item container direction={'row'} xs={8} sx={{pr: '10px', overflow: 'hidden'}}>
-                                {/* <Checkbox sx={{p: '0'}}/> */}
+                                <Checkbox sx={{p: '0'}} checked={expense.selected === true}
+                                  onChange={() => handleCheckBoxChange(expense.id, !expense.selected)
+                                  }/>
                                 <Box sx={{ml: '10px'}}>
                                   <Typography variant='body1' sx={{fontSize: '15px'}}>{expense.description}</Typography>
                                   <Typography variant='caption' sx={{fontSize: '12px'}}>{dateFormatter(expense.date)}</Typography>
                                 </Box>
                               </Grid>
-                              <Grid item container direction={'row'} xs={4} justifyContent={'space-between'} alignItems={'center'}>
+                              <Grid item container direction={'row'} xs={4} justifyContent={'flex-end'} alignItems={'center'}>
                                 <Typography variant='body2' sx={{fontSize: '14px', pr: '2px'}}>{centsToString(expense.amount)}</Typography>
-                                <IconButton onClick={() => handleDeleteExpense(expense.id)} sx={{p: '0 !important'}}>
+                                {/* <IconButton onClick={() => handleDeleteExpense(expense.id)} sx={{p: '0 !important'}}>
                                   <DeleteForeverIcon sx={{fontSize: '30px', color: 'red'}}/>
-                                </IconButton>
+                                </IconButton> */}
                                 
                               </Grid>
                               {/* <Modal 
