@@ -8,7 +8,7 @@ Aplicação para gerenciamento de despesas e cobranças.
 
 - Next.js
 - TypeScript
-- TailwindCSS
+- Material UI
 - React Hook Form
 - Figma (para o design)
 

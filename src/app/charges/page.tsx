@@ -6,6 +6,7 @@ import { Typography, IconButton, Divider, Box, List, ListItem, Checkbox, Modal, 
 import { useTheme } from '@mui/material/styles'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import AddIcon from '@mui/icons-material/Add'
+import CircularProgress from '@mui/material/CircularProgress'
 
 // Utils
 import handleMessageError from '@/utils/handleMessageError'
@@ -49,13 +50,14 @@ export default function Expenses() {
   const [ newChargeDescription, setNewChargeDescription ] = React.useState<string>('')
   const [ newChargeAmount, setNewChargeAmount ] = React.useState<string>('')
   const [ isAllSelected, setIsAllSelected ] = React.useState<boolean>(false)
+  const [ loading, setLoading ] = React.useState<boolean>(false)
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedToken = localStorage.getItem('token')
       if (!storedToken) return
       setToken(storedToken)
-      
+      setLoading(true)
       handleGetCharges(storedToken)
     }
   }, [setToken])
@@ -85,7 +87,9 @@ export default function Expenses() {
           selected: false
         }
       })
+
       setCharges(charges)
+      setLoading(false)
     } catch (error) {
       handleMessageError(error)
     }
@@ -165,9 +169,18 @@ export default function Expenses() {
 
           <Grid container direction={'column'} item xs={12} sx={{display: 'flex', alignItems: 'center'}}>
 
-            <Typography variant='h4' sx={{fontWeight: 'bold', mb: '15px', fontSize: '40px'}}>
+            <Typography variant='h4' sx={{fontWeight: 'bold', mb: '15px', fontSize: '40px', mt: '30px'}}>
               <span style={blue}>CO</span><span style={red}>BRAN</span><span style={orange}>ÇAS</span>
             </Typography>
+
+            {loading && <CircularProgress size={70} sx={{
+              position: 'absolute', 
+              zIndex: 10,
+              top: '50%',
+              left: '50%',
+              marginTop: '-12px',
+              marginLeft: '-35px',
+            }} />}
 
             <List sx={{
               width: '100%', backgroundColor: 'white', 

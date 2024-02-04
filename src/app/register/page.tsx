@@ -43,6 +43,11 @@ export default function Register() {
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
+      if (!data.name || !data.email || !data.password || !data.confirmPassword) {
+        toast.error('Preencha todos os campos.')
+        return
+      }
+
       if (data.password !== data.confirmPassword) throw new Error('As senhas não coincidem')
       const teste = await api.post('/register', {name: data.name, email: data.email, password: data.password})
       console.log(teste)
@@ -55,17 +60,17 @@ export default function Register() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Grid container direction={'column'} className='register' sx={{height: '100vh', justifyContent: 'center', alignItems: 'center'}}>
+      <Grid container direction={'column'} className='register' sx={{height: '100vh', justifyContent: 'center', alignItems: 'center', pb: '20px'}}>
 
-        <Grid container direction={'column'} item xs={12} sx={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        <Grid container direction={'column'} item xs={12} sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', maxWidth: '230px !important'}}>
 
           <Typography variant='h4' sx={{fontWeight: 'bold', fontSize: '40px'}}>FAÇA SEU</Typography>
-          <Typography variant='h4' sx={{fontWeight: 'bold', mb: '15px', fontSize: '40px'}}>
+          <Typography variant='h4' sx={{fontWeight: 'bold', mb: '10px', fontSize: '40px'}}>
             <span style={red}>CA</span><span style={blue}>DAS</span><span style={orange}>TRO</span>
           </Typography>
 
       
-          <Grid container alignItems={'center'} justifyContent={'center'} sx={{mb: '20px', gap: '15px', maxWidth: '220px'}}>
+          <Grid container alignItems={'center'} justifyContent={'center'} sx={{mb: '10px', gap: '10px'}}>
             <TextField id="outlined-basic" label="Nome" variant="outlined" sx={{width: '100%'}} {...register('name')} />
             <TextField id="outlined-basic" label="Email" variant="outlined" sx={{width: '100%'}} {...register('email')} />
             <FormControl variant="outlined" >
@@ -110,10 +115,10 @@ export default function Register() {
             </FormControl>
           </Grid>
 
-          <Button variant="contained" sx={{borderRadius: '5px', width: '120px'}} type='submit'>Cadastrar</Button>
+          <Button variant="contained" sx={{borderRadius: '5px', width: '100%'}} type='submit'>Cadastrar</Button>
 
-          <Typography variant='body1' sx={{mt: '10px'}}>Já possue uma conta?</Typography>
-          <Button variant='outlined' href='/login' sx={{borderRadius: '5px', width: '120px'}}>Login</Button>
+          <Typography variant='body1' sx={{mt: '10px', fontSize: '13px'}}>Já possue uma conta?</Typography>
+          <Button variant='outlined' href='/login' sx={{borderRadius: '5px', width: '100%'}}>Login</Button>
         
         </Grid>
       </Grid>

@@ -50,6 +50,11 @@ export default function AuthProvider({
   
   const signIn = useCallback(
     async ({ email, password }: ISignCredentials) => {
+      if (!email || !password) {
+        toast.error('Preencha todos os campos.')
+        return
+      }
+
       const toastId = toast.loading('Fazendo login...', {
         theme: 'colored',
       })
