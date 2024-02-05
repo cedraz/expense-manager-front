@@ -5,7 +5,7 @@ import * as React from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 
 // Material UI
-import { Button, FilledInput, FormControl, Grid, IconButton, InputAdornment, InputLabel, Link, OutlinedInput, TextField, Typography } from '@mui/material'
+import { Button, FilledInput, FormControl, Grid, IconButton, InputAdornment, InputLabel, Link, TextField, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
 // Hooks

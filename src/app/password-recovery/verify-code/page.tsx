@@ -3,7 +3,7 @@ import * as React from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 // Material UI
-import { Button, Card, CardContent, Grid, Link, TextField, Typography } from '@mui/material'
+import { Button, Card, CardContent, Grid, TextField, Typography } from '@mui/material'
 
 // Services
 import { verifyCode } from '@/services/users/verify-code'

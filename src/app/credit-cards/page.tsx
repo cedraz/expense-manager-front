@@ -113,7 +113,7 @@ export default function CreditCards() {
 
   const handleSave = async (selectedCardId: string) => {
     try {
-      const newCreditCard = await updateCreditCard(token, selectedCardId, newCardName)
+      await updateCreditCard(token, selectedCardId, newCardName)
       toast.success('Cartão atualizado com sucesso!')
 
       setCreditCards((prevCreditCards) =>
