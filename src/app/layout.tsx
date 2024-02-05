@@ -40,7 +40,7 @@ export default function RootLayout({
               position="top-right"
               autoClose={3000}
               limit={1}/>
-            {pathname !== '/' && pathname !== '/login' && pathname !== '/register' && <Navbar />}
+            {pathname !== '/' && pathname !== '/login' && pathname !== '/register' &&  pathname !== '/verify-email' &&  pathname !== '/forgot-password' && pathname !== '/verify-code' && <Navbar />}
             <div className={montserrat.className}>
               {children}
             </div>

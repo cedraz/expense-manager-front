@@ -15,10 +15,11 @@ import handleMessageError from '@/utils/handleMessageError'
 import { profile } from '@/services/users/profile'
 import { updateProfile } from '@/services/users/update-profile'
 
-//Toastfy
+// React Toastify
 import { toast } from 'react-toastify'
+
+// Interfaces
 import { userInterface } from '@/types/interfaces'
-import { green } from '@mui/material/colors'
 
 export default function Expenses() {
   const theme = useTheme()
@@ -76,7 +77,6 @@ export default function Expenses() {
       }
 
       setLoading(false)
-
       setUser(user)
     } catch (error) {
       console.error(error)

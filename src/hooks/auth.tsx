@@ -40,7 +40,13 @@ export default function AuthProvider({
   const route = useRouter()
   useEffect(() => {
     const token = localStorage.getItem('token')
-    if (!token && (pathname !== '/login' && pathname !== '/register' && pathname !== '/')) {
+    if (!token && (
+      pathname !== '/login' 
+      && pathname !== '/register' 
+      && pathname !== '/' 
+      && pathname !== '/password-recovery/forgot-password' 
+      && pathname !== '/password-recovery/verify-code'
+      && pathname !== '/password-recovery/update-password')) {
       route.push('/login')
   
       return

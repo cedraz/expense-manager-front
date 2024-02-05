@@ -4,7 +4,7 @@ import * as React from 'react'
 // React Hook Form
 import { useForm, SubmitHandler } from 'react-hook-form'
 
-// Toastify
+// React Toastify
 import { toast } from 'react-toastify'
 
 // Material UI
@@ -52,7 +52,7 @@ export default function Register() {
       const teste = await api.post('/register', {name: data.name, email: data.email, password: data.password})
       console.log(teste)
       toast.success('Cadastrado com sucesso')
-      router.push('/login')
+      router.push('/verify-email-warning')
     } catch (error) {
       toast.error(handleMessageError(error))
     }
