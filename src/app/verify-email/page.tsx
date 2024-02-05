@@ -13,14 +13,14 @@ import handleMessageError from '@/utils/handleMessageError'
 
 export default function EmailVerification() {
   const route = useRouter()
-  const searchParams = useSearchParams()
- 
+  
   const [ loading, setLoading ] = React.useState(false)
   const [ emailVerified, setEmailVerified ] = React.useState(false)
-
+  
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       setLoading(true)
+      const searchParams = useSearchParams()
       const token = searchParams.get('token')
       
       handleVerifyEmail(token)

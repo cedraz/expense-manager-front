@@ -20,11 +20,11 @@ type Inputs = {
 
 export default function VerifyCode() {
   const route = useRouter()
-  const searchParams = useSearchParams()
-
+  
   const { register, handleSubmit } = useForm<Inputs>()
-
+  
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    const searchParams = useSearchParams()
     const email = searchParams.get('email')
     const code = data.code
 
