@@ -8,6 +8,7 @@ import WalletIcon from '@mui/icons-material/Wallet'
 import CreateIcon from '@mui/icons-material/Create'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
+import CircularProgress from '@mui/material/CircularProgress'
 
 // Toastify
 import { toast } from 'react-toastify'
@@ -35,13 +36,17 @@ export default function CreditCards() {
   const [ creditCards, setCreditCards ] = React.useState<creditCardInterface[]>([])
   const [ selectedCardId, setSelectedCardId ] = React.useState<string | null>(null) 
   const [ newCardName, setNewCardName ] = React.useState<string>('')
+  const [ loading, setLoading ] = React.useState<boolean>(false)
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
+      setLoading(true)
+
       const storedToken = localStorage.getItem('token')
       if (!storedToken) return
+
       setToken(storedToken)
-      
+
       handleGetCreditCards(storedToken)
     }
 
@@ -70,6 +75,9 @@ export default function CreditCards() {
   const handleGetCreditCards = async (token: string) => {
     try {
       const response = await getCreditCards(token)
+
+      setLoading(false)
+
       setCreditCards(response)
     } catch (error) {
       toast.error(handleMessageError(error))
@@ -91,7 +99,6 @@ export default function CreditCards() {
     }
   }
   
-
   const handleOpenCreateCreditCard = () => setOpen(true)
 
   const handleCloseCreateCreditCard = () => setOpen(false)
@@ -106,7 +113,7 @@ export default function CreditCards() {
 
   const handleSave = async (selectedCardId: string) => {
     try {
-      const newCreditCard = await updateCreditCard(token, selectedCardId, newCardName)
+      await updateCreditCard(token, selectedCardId, newCardName)
       toast.success('Cartão atualizado com sucesso!')
 
       setCreditCards((prevCreditCards) =>
@@ -145,15 +152,17 @@ export default function CreditCards() {
       <Grid sx={{height: '100%', minHeight: '100vh'}} className='fundo-padrao'>
         <Grid container direction={'column'} sx={{display: 'flex', alignItems: 'center'}}>
 
-          <Grid container direction={'column'} item xs={12} sx={{display: 'flex', alignItems: 'center'}}>
+          <Grid container direction={'column'} item xs={12} sx={{display: 'flex', alignItems: 'center', mt: '30px'}}>
 
-            <Typography variant='h4' sx={{fontWeight: 'bold', mb: '15px', fontSize: '40px'}}>
+            <Typography variant='h4' sx={{fontWeight: 'bold',mb: '15px', fontSize: '40px'}}>
               <span style={blue}>CAD</span><span style={red}>AST</span><span style={orange}>RAR</span>
             </Typography>
 
             <Box className='card' sx={{width: '300px', height: '200px', borderRadius: '15px', position: 'relative', mb: '15px'}}>
               <Typography variant='body1' sx={{color: '#fff', position: 'absolute', bottom: 15, left: 15}}>Nome do cartão</Typography>
             </Box>
+
+            {loading && <CircularProgress />}
 
             <Modal open={open} onClose={handleCloseCreateCreditCard}>
               <Box sx={style}>

@@ -2,12 +2,13 @@
 import * as React from 'react'
 
 // Material UI
-import { Typography, Grid, IconButton, Divider, Box, List, ListItem, Accordion, AccordionSummary, AccordionDetails, Checkbox, Modal, Button, TextField, Card } from '@mui/material'
+import { Typography, Grid, IconButton, Divider, Box, List, ListItem, Accordion, AccordionSummary, AccordionDetails, Checkbox, Modal, Button, TextField } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import WalletIcon from '@mui/icons-material/Wallet'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import AddIcon from '@mui/icons-material/Add'
+import CircularProgress from '@mui/material/CircularProgress'
 
 // Utils
 import handleMessageError from '@/utils/handleMessageError'
@@ -17,7 +18,7 @@ import { centsToString } from '@/utils/centsToString'
 // Services
 import { getCreditCards } from '@/services/credit-cards/getCreditCards'
 import { createExpense } from '@/services/expenses/createExpense'
-import { deleteExpense } from '@/services/expenses/delete-expense'
+// import { deleteExpense } from '@/services/expenses/delete-expense'
 import { deleteManyExpense } from '@/services/expenses/delete-many-expenses'
 
 // Toastify
@@ -29,9 +30,9 @@ import {
   creditCardWithStatementInterface, 
   expenseInterface
 } from '../../types/interfaces'
-import { dateFormatter } from '@/utils/dateFormatter'
-import { blue, red, orange } from '@mui/material/colors'
-import style from 'styled-jsx/style'
+// import { dateFormatter } from '@/utils/dateFormatter'
+// import { blue, red, orange } from '@mui/material/colors'
+// import style from 'styled-jsx/style'
 
 export default function Expenses() {
   const theme = useTheme()
@@ -55,19 +56,23 @@ export default function Expenses() {
   // const [open, setOpen] = React.useState(false)
   const [ token, setToken ] = React.useState<string>('')
   const [ creditCards, setCreditCards ] = React.useState<creditCardWithStatementInterface[]>([])
-  const [ selectedExpenses, setSelectedExpenses ] = React.useState<string[]>([])
+  // const [ selectedExpenses, setSelectedExpenses ] = React.useState<string[]>([])
   const [ statement, setStatement ] = React.useState(0)
 
   const [ expenseDescription, setExpenseDescription ] = React.useState<string>('')
   const [ expenseAmount, setExpenseAmount ] = React.useState<string>('')
   const [ selectedCardId, setSelectedCardId ] = React.useState<string | null>(null) 
+  const [ loading, setLoading ] = React.useState<boolean>(false)
 
   React.useEffect(() => {
+    
     if (typeof window !== 'undefined') {
       const storedToken = localStorage.getItem('token')
       if (!storedToken) return
       setToken(storedToken)
-      
+
+      setLoading(true)
+
       handleGetExpenses(storedToken)
     }
 
@@ -241,8 +246,6 @@ export default function Expenses() {
           return accExpenses + expense.amount
         }, 0)
 
-
-
         return {
           ...creditCard,
           statement: creditCardStatement,
@@ -261,6 +264,7 @@ export default function Expenses() {
 
       setStatement(totalStatement)
       setCreditCards(newCreditCards)
+      setLoading(false)
     } catch (error) {
       toast.error(handleMessageError(error))
     }
@@ -273,11 +277,20 @@ export default function Expenses() {
 
           <Grid container direction={'column'} item xs={12} sx={{display: 'flex', alignItems: 'center'}}>
 
-            <Typography variant='h4' sx={{fontWeight: 'bold', mb: '15px', mt: '30px' ,fontSize: '40px'}}>
+            <Typography variant='h4' sx={{fontWeight: 'bold', mb: '15px', mt: '30px', fontSize: '40px'}}>
               <span style={blue}>DES</span><span style={red}>PE</span><span style={orange}>SAS</span>
             </Typography>
 
-            <List sx={{width: '100%'}}>
+            {loading && <CircularProgress size={70} sx={{
+              position: 'absolute', 
+              zIndex: 10,
+              top: '50%',
+              left: '50%',
+              marginTop: '-12px',
+              marginLeft: '-35px',
+            }} />}
+
+            <List sx={{width: '100%',}}>
               <ListItem sx={{display: 'flex', justifyContent: 'flex-end'}}>
                 {/* <Grid container direction={'row'} alignItems={'center'}>
                   <Checkbox />
@@ -296,7 +309,7 @@ export default function Expenses() {
 
               {creditCards.map((creditCard: creditCardWithStatementInterface) => (
                 <ListItem sx={{width: '100%'}} key={creditCard.id}>
-                  <Accordion sx={{mb: '25px', width: '100%'}}>
+                  <Accordion sx={{width: '100%'}}>
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
                       sx={{backgroundColor: '#B1AFFF'}}>

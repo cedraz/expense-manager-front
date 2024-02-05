@@ -14,8 +14,8 @@ export default function Navbar() {
 
   const links = [
     {
-      name: 'Página Inicial',
-      href: '/'
+      name: 'Perfil',
+      href: '/profile'
     },
     {
       name: 'Cartões',
@@ -29,11 +29,12 @@ export default function Navbar() {
       name: 'Cobranças',
       href: '/charges'
     },
-    {
-      name: 'Perfil',
-      href: '/profile'
-    }
   ]
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    window.location.href = '/'
+  }
 
   return (
     <Grid container sx={{justifyContent: 'space-between', position: 'fixed'}}>
@@ -48,6 +49,9 @@ export default function Navbar() {
                 <Button variant='contained' href={link.href} sx={{width: '100%'}}>{link.name}</Button>
               </ListItem>
             ))}
+            <ListItem>
+              <Button variant='contained' onClick={handleLogout}  sx={{width: '100%'}}>Sair</Button>
+            </ListItem>
           </List>
         </Box>
       </Drawer>

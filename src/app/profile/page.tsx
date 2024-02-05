@@ -2,8 +2,11 @@
 import * as React from 'react'
 
 // Material UI
-import { Typography, Grid, TextField, Stack, Button } from '@mui/material'
+import { Typography, Grid, TextField, Stack, Button, Box } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
+import AccountBoxIcon from '@mui/icons-material/AccountBox'
+import Fingerprint from '@mui/icons-material/Fingerprint'
+import CircularProgress from '@mui/material/CircularProgress'
 
 // Utils
 import handleMessageError from '@/utils/handleMessageError'
@@ -12,8 +15,10 @@ import handleMessageError from '@/utils/handleMessageError'
 import { profile } from '@/services/users/profile'
 import { updateProfile } from '@/services/users/update-profile'
 
-//Toastfy
+// React Toastify
 import { toast } from 'react-toastify'
+
+// Interfaces
 import { userInterface } from '@/types/interfaces'
 
 export default function Expenses() {
@@ -25,6 +30,7 @@ export default function Expenses() {
 
   const [ token, setToken ] = React.useState<string>('')
   const [ user, setUser ] = React.useState<userInterface>({name: '', email: ''})
+  const [ loading, setLoading ] = React.useState<boolean>(false)
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -34,6 +40,8 @@ export default function Expenses() {
         toast.error('Erro ao carregar os dados do usuário.')
         return
       }
+
+      setLoading(true)
 
       setToken(storedToken)
       handleProfile(storedToken)
@@ -68,6 +76,7 @@ export default function Expenses() {
         password: ''
       }
 
+      setLoading(false)
       setUser(user)
     } catch (error) {
       console.error(error)
@@ -84,24 +93,54 @@ export default function Expenses() {
             <span style={blue}>PE</span><span style={red}>RF</span><span style={orange}>IL</span>
           </Typography>
 
+          <AccountBoxIcon sx={{fontSize: '100px'}}></AccountBoxIcon>
+
           <Stack spacing={2} sx={{
             width: '100%', 
             display: 'flex',
             justifyContent: 'center',
             maxWidth: '300px',
-            mt: '60px'
+            mt: '30px'
           }}>
-            <TextField 
-              label="Nome"
-              value={user.name}
-              onChange={(e) => setUser({...user, name: e.target.value})}
-            ></TextField>
+            <Box sx={{position: 'relative'}}>
+              <TextField 
+                label="Nome"
+                value={user.name}
+                sx={{width: '100%'}}
+                onChange={(e) => setUser({...user, name: e.target.value})}
+              ></TextField>
+              {loading && <CircularProgress size={24}
+                sx={{
+                  position: 'absolute',
+                  zIndex: 10,
+                  top: '50%',
+                  left: '50%',
+                  marginTop: '-12px',
+                  marginLeft: '-12px',
+                }}/>}
+            </Box>
 
-            <TextField
-              label="Email"
-              value={user.email}
-              onChange={(e) => setUser({...user, email: e.target.value})}
-            ></TextField>
+            <Box sx={{position: 'relative'}}>
+              <TextField
+                label="Email"
+                value={user.email}
+                sx={{width: '100%'}}
+                onChange={(e) => setUser({...user, email: e.target.value})}
+              ></TextField>
+              {loading && <CircularProgress size={24}
+                sx={{
+                  position: 'absolute',
+                  zIndex: 10,
+                  top: '50%',
+                  left: '50%',
+                  marginTop: '-12px',
+                  marginLeft: '-12px',
+                }}/>}
+            </Box>
+
+            <Button href='/forgot-password' variant='outlined' endIcon={<Fingerprint/>}>
+              Alterar senha
+            </Button>
 
             <Button variant='contained' onClick={handleSubmit}>
                   Atualizar perfil
