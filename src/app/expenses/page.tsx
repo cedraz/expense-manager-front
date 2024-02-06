@@ -9,17 +9,19 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import AddIcon from '@mui/icons-material/Add'
 import CircularProgress from '@mui/material/CircularProgress'
+import EditIcon from '@mui/icons-material/Edit'
 
 // Utils
 import handleMessageError from '@/utils/handleMessageError'
 import { stringToCents } from '@/utils/stringToCents'
 import { centsToString } from '@/utils/centsToString'
+import { dateFormatter } from '@/utils/dateFormatter'
 
 // Services
 import { getCreditCards } from '@/services/credit-cards/getCreditCards'
 import { createExpense } from '@/services/expenses/createExpense'
-// import { deleteExpense } from '@/services/expenses/delete-expense'
 import { deleteManyExpense } from '@/services/expenses/delete-many-expenses'
+import { updateExpense } from '@/services/expenses/update-expense'
 
 // Toastify
 import { toast } from 'react-toastify'
@@ -30,9 +32,6 @@ import {
   creditCardWithStatementInterface, 
   expenseInterface
 } from '../../types/interfaces'
-// import { dateFormatter } from '@/utils/dateFormatter'
-// import { blue, red, orange } from '@mui/material/colors'
-// import style from 'styled-jsx/style'
 
 export default function Expenses() {
   const theme = useTheme()
@@ -53,16 +52,28 @@ export default function Expenses() {
     p: 4,
   }
 
-  // const [open, setOpen] = React.useState(false)
   const [ token, setToken ] = React.useState<string>('')
   const [ creditCards, setCreditCards ] = React.useState<creditCardWithStatementInterface[]>([])
-  // const [ selectedExpenses, setSelectedExpenses ] = React.useState<string[]>([])
   const [ statement, setStatement ] = React.useState(0)
-
+  
   const [ expenseDescription, setExpenseDescription ] = React.useState<string>('')
   const [ expenseAmount, setExpenseAmount ] = React.useState<string>('')
+
+  const [ newExpenseDescription, setNewExpenseDescription ] = React.useState<string>('')
+  const [ newExpenseAmount, setNewExpenseAmount ] = React.useState<string>('')
+
   const [ selectedCardId, setSelectedCardId ] = React.useState<string | null>(null) 
+  const [ selectedExpenseId, setSelectedExpenseId ] = React.useState<string | null>(null)
   const [ loading, setLoading ] = React.useState<boolean>(false)
+
+  const handleOpen = (expenseId: string) => {
+    setSelectedExpenseId(expenseId)
+  }
+  const handleClose = () => {
+    setNewExpenseDescription('')
+    setNewExpenseAmount('')
+    setSelectedExpenseId(null)
+  }
 
   React.useEffect(() => {
     
@@ -77,17 +88,6 @@ export default function Expenses() {
     }
 
   }, [setToken])
-
-  const dateFormatter = (date: string) => {
-    const newDate = new Date(date)
-
-    return new Intl.DateTimeFormat('pt-BR', {
-      dateStyle: 'short'
-    }).format(newDate)
-  }
-
-  // const handleOpen = () => setOpen(true)
-  // const handleClose = () => setOpen(false)
 
   const handleOpenCreateExpense = (cardId: string) => {
     setSelectedCardId(cardId)
@@ -138,34 +138,6 @@ export default function Expenses() {
       toast.error(handleMessageError(error))
     }
   }
-
-  // Função para deletar uma despesa (não é mais utilizada)
-  // const handleDeleteExpense = async (expenseId: string) => {
-  //   try {
-  //     await deleteExpense(token, expenseId)
-  
-  //     setCreditCards((prevCreditCards) => {
-  //       return prevCreditCards.map((creditCard) => {
-  //         if (creditCard.Expenses.some((expense) => expense.id === expenseId)) {
-  //           const newExpenses = creditCard.Expenses.filter((expense) => expense.id !== expenseId)
-  //           const newStatement = newExpenses.reduce((acc, expense) => acc + expense.amount, 0)
-  
-  //           return {
-  //             ...creditCard,
-  //             Expenses: newExpenses,
-  //             statement: newStatement,
-  //           }
-  //         }
-  
-  //         return creditCard
-  //       })
-  //     })
-  
-  //     toast.success('Despesa deletada com sucesso!')
-  //   } catch (error) {
-  //     toast.error(handleMessageError(error))
-  //   }
-  // }
 
   const handleDeleteManyExpenses = async () => {
     const expensesToDelete = creditCards.reduce<expenseInterface[]>((acc, creditCard) => {
@@ -241,6 +213,8 @@ export default function Expenses() {
     try {
       const creditCards = await getCreditCards(token)
 
+      console.log(creditCards)
+
       const newCreditCards = creditCards.map((creditCard: creditCardInterface) => {
         const creditCardStatement = creditCard.Expenses.reduce((accExpenses: number, expense: expenseInterface) => {
           return accExpenses + expense.amount
@@ -270,6 +244,63 @@ export default function Expenses() {
     }
   }
 
+  const handleUpdateExpense = async (expenseId: string | null, creditCardId: string) => {
+    try {
+      if (!expenseId) {
+        toast.error('Seleciona uma despesa para atualizar.')
+        return
+      }
+
+      const newAmount = stringToCents(newExpenseAmount)
+
+      if (!newAmount) {
+        toast.error('Digite um valor válido.')
+        return
+      }
+
+      if (newExpenseDescription == '' || newExpenseDescription == undefined) {
+        toast.error('Digite uma descrição válida. Mínimo de 1 e Máximo de 40 caracteres.')
+        return
+      }
+
+      const newExpense = await updateExpense({
+        token, 
+        expenseId, 
+        description: newExpenseDescription, 
+        amount: newAmount
+      })
+
+      setCreditCards((prevCreditCards) => {
+        return prevCreditCards.map((creditCard) => {
+          if (creditCard.id === creditCardId) {
+            const updatedExpenses = creditCard.Expenses.map((expense) => {
+              if (expense.id === newExpense.id) {
+                return newExpense
+              }
+              return expense
+            })
+      
+            const updatedStatement = updatedExpenses.reduce((total, expense) => total + expense.amount, 0)
+      
+            return {
+              ...creditCard,
+              Expenses: updatedExpenses,
+              statement: updatedStatement,
+            }
+          }
+          return creditCard
+        })
+      })
+
+      setSelectedExpenseId(null)
+      setNewExpenseDescription('')
+      setNewExpenseAmount('')
+      toast.success('Despesa atualizada com sucesso.')
+    } catch (error) {
+      toast.error(handleMessageError(error))
+    }
+  }
+
   return (
     <>
       <Grid sx={{minHeight: '100vh', height: '100%'}} className='fundo-padrao'>
@@ -291,12 +322,7 @@ export default function Expenses() {
             }} />}
 
             <List sx={{width: '100%',}}>
-              <ListItem sx={{display: 'flex', justifyContent: 'flex-end'}}>
-                {/* <Grid container direction={'row'} alignItems={'center'}>
-                  <Checkbox />
-                  <Typography variant='body2' sx={{ml: '15px'}}>Selecionar todos</Typography>
-                </Grid> */}
-                
+              <ListItem sx={{display: 'flex', justifyContent: 'flex-end'}}>                
                 <Typography variant='body2'>Remover despesas</Typography>
                 <IconButton disabled={!isAtLeastOneSelected()} color={'error'} onClick={handleDeleteManyExpenses}>
                   <DeleteForeverIcon/>
@@ -324,7 +350,7 @@ export default function Expenses() {
                         {creditCard.Expenses.map((expense: expenseInterface) => (
                           <ListItem sx={{p: '0', mt: '10px', mb: '20px'}} key={expense.id}>
                             <Grid container sx={{alignItems: 'center', justifyContent: 'space-between'}}>
-                              <Grid item container direction={'row'} xs={8} sx={{pr: '10px', overflow: 'hidden'}}>
+                              <Grid item container direction={'row'} xs={6} sx={{pr: '10px', overflow: 'hidden'}}>
                                 <Checkbox sx={{p: '0'}} checked={expense.selected === true}
                                   onChange={() => handleCheckBoxChange(expense.id, !expense.selected)
                                   }/>
@@ -335,24 +361,43 @@ export default function Expenses() {
                               </Grid>
                               <Grid item container direction={'row'} xs={4} justifyContent={'flex-end'} alignItems={'center'}>
                                 <Typography variant='body2' sx={{fontSize: '14px', pr: '2px'}}>{centsToString(expense.amount)}</Typography>
-                                {/* <IconButton onClick={() => handleDeleteExpense(expense.id)} sx={{p: '0 !important'}}>
-                                  <DeleteForeverIcon sx={{fontSize: '30px', color: 'red'}}/>
-                                </IconButton> */}
-                                
                               </Grid>
-                              {/* <Modal 
-                                open={open}
-                                onClose={handleClose}
-                              >
-                                <Box sx={style}>
-                                  <Typography id="modal-modal-title" variant="h6" component="h2">
-                            Text in a modal
-                                  </Typography>
-                                  <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                                  </Typography>
-                                </Box>
-                              </Modal> */}
+                              <Grid item container direction={'row'} xs={2} justifyContent={'flex-end'} alignItems={'center'}>
+                                <IconButton onClick={() => handleOpen(expense.id)}>
+                                  <EditIcon/>
+                                </IconButton>
+                                <Modal 
+                                  open={selectedExpenseId === expense.id}
+                                  onClose={handleClose}
+                                >
+                                  <Box sx={style}>
+                                    <Typography id="modal-modal-title" variant="h6" component="h2" sx={{mb: '15px'}}>
+                                      Atualize sua despesa
+                                    </Typography>
+
+                                    <TextField
+                                      id="outlined-basic"
+                                      label="Descrição"
+                                      variant="outlined"
+                                      sx={{mb: '15px', width: '100%'}}
+                                      value={newExpenseDescription}
+                                      onChange={(e) => setNewExpenseDescription(e.target.value)}
+                                    />
+                                    <TextField
+                                      id="outlined-basic"
+                                      label="Valor"
+                                      variant="outlined"
+                                      sx={{mb: '15px', mt: '10px', width: '100%'}}
+                                      value={newExpenseAmount}
+                                      onChange={(e) => setNewExpenseAmount(e.target.value)}
+                                    />
+                                    <Button variant='contained' sx={{borderRadius: '5px', mt: '10px', mb: '10px'}} onClick={() =>  handleUpdateExpense(expense.id, expense.credit_card_id)}>
+                                      Atualizar despesa
+                                    </Button>
+                                  </Box>
+                                </Modal>
+                              </Grid>
+                              
                             </Grid>
                           </ListItem>
                         ))}
