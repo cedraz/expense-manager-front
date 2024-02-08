@@ -350,21 +350,21 @@ export default function Expenses() {
                         {creditCard.Expenses.map((expense: expenseInterface) => (
                           <ListItem sx={{p: '0', mt: '10px', mb: '20px'}} key={expense.id}>
                             <Grid container sx={{alignItems: 'center', justifyContent: 'space-between'}}>
-                              <Grid item container direction={'row'} xs={6} sx={{pr: '10px', overflow: 'hidden'}}>
+                              <Grid item container xs={12}>
+                                <Typography variant='body1' sx={{fontSize: '15px', width: '100%'}}>{expense.description}</Typography>
+                              </Grid>
+                              <Grid item container direction={'row'} xs={7} sx={{pr: '5px', overflow: 'hidden'}} alignItems={'center'}>
                                 <Checkbox sx={{p: '0'}} checked={expense.selected === true}
                                   onChange={() => handleCheckBoxChange(expense.id, !expense.selected)
                                   }/>
-                                <Box sx={{ml: '10px'}}>
-                                  <Typography variant='body1' sx={{fontSize: '15px'}}>{expense.description}</Typography>
-                                  <Typography variant='caption' sx={{fontSize: '12px'}}>{dateFormatter(expense.date)}</Typography>
-                                </Box>
+                                <Typography variant='caption' sx={{fontSize: '12px', ml: '15px'}}>{dateFormatter(expense.date)}</Typography>
                               </Grid>
-                              <Grid item container direction={'row'} xs={4} justifyContent={'flex-end'} alignItems={'center'}>
+                              <Grid item container direction={'row'} xs={3} justifyContent={'flex-end'} alignItems={'center'}>
                                 <Typography variant='body2' sx={{fontSize: '14px', pr: '2px'}}>{centsToString(expense.amount)}</Typography>
                               </Grid>
                               <Grid item container direction={'row'} xs={2} justifyContent={'flex-end'} alignItems={'center'}>
                                 <IconButton onClick={() => handleOpen(expense.id)}>
-                                  <EditIcon/>
+                                  <EditIcon sx={{width: '20px'}}/>
                                 </IconButton>
                                 <Modal 
                                   open={selectedExpenseId === expense.id}
@@ -397,7 +397,6 @@ export default function Expenses() {
                                   </Box>
                                 </Modal>
                               </Grid>
-                              
                             </Grid>
                           </ListItem>
                         ))}
