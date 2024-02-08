@@ -289,13 +289,15 @@ export default function Charges() {
                     justifyContent: 'space-between', 
                     
                   }}>
+                    <Grid item container xs={12}>
+                      <Typography variant='body1' sx={{fontSize: '15px'}}>{charge.description}</Typography>
+                    </Grid>
                     <Grid item container direction={'row'} xs={6} sx={{pr: '10px', overflow: 'hidden'}}>
                       <Checkbox  
                         checked={charge.selected}
                         onChange={() => handleCheckboxChange(charge.id, !charge.selected)
                         }/>
                       <Box sx={{ml: '5px'}}>
-                        <Typography variant='body1' sx={{fontSize: '15px'}}>{charge.description}</Typography>
                         <Typography variant='caption' sx={{fontSize: '12px'}}>{dateFormatter(charge.date)}</Typography>
                       </Box>
                     </Grid>
