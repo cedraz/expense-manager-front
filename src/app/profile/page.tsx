@@ -138,7 +138,7 @@ export default function Expenses() {
                 }}/>}
             </Box>
 
-            <Button href='/forgot-password' variant='outlined' endIcon={<Fingerprint/>}>
+            <Button href='/password-recovery/forgot-password' variant='outlined' endIcon={<Fingerprint/>}>
               Alterar senha
             </Button>
 
