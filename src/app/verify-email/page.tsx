@@ -1,6 +1,6 @@
 'use client'
 import * as React from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 // Material UI
 import { Grid, Typography } from '@mui/material'
@@ -20,7 +20,7 @@ export default function EmailVerification() {
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       setLoading(true)
-      const searchParams = useSearchParams()
+      const searchParams = new URLSearchParams(window.location.search)
       const token = searchParams.get('token')
       
       handleVerifyEmail(token)
