@@ -1,6 +1,6 @@
 'use client'
 import * as React from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 // Material UI
 import { Button, Card, CardContent, Grid, TextField, Typography } from '@mui/material'
@@ -24,7 +24,7 @@ export default function VerifyCode() {
   const { register, handleSubmit } = useForm<Inputs>()
   
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const searchParams = useSearchParams()
+    const searchParams = new URLSearchParams(window.location.search)
     const email = searchParams.get('email')
     const code = data.code
 
