@@ -44,9 +44,11 @@ export default function AuthProvider({
       pathname !== '/login' 
       && pathname !== '/register' 
       && pathname !== '/' 
-      && pathname !== '/password-recovery/forgot-password' 
-      && pathname !== '/password-recovery/verify-code'
-      && pathname !== '/password-recovery/update-password')) {
+      && pathname !== '/password-recovery/password-recovery/forgot-password' 
+      && pathname !== '/password-recovery/password-recovery/verify-code'
+      && pathname !== '/password-recovery/password-recovery/update-password'
+      && pathname !== '/password-recovery/verify-email'
+      && pathname !== '/password-recovery/verify-email-warning')) {
       route.push('/login')
   
       return
