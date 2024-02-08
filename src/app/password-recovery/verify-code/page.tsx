@@ -38,6 +38,8 @@ export default function VerifyCode() {
 
       localStorage.setItem('passwordToken', response.token)
 
+      toast.success('Código validado com sucesso!')
+
       route.push('/password-recovery/update-password')
     } catch (error) {
       const messageError = handleMessageError(error)

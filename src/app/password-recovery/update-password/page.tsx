@@ -3,7 +3,7 @@ import * as React from 'react'
 import { useRouter } from 'next/navigation'
 
 // Material UI
-import { Button, Card, CardContent, Grid, TextField, Typography } from '@mui/material'
+import { Button, Card, CardContent, FormControl, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField, Typography } from '@mui/material'
 
 // Services
 import { updatePassword } from '@/services/users/update-password'
@@ -13,6 +13,7 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 
 import { toast } from 'react-toastify'
 import handleMessageError from '@/utils/handleMessageError'
+import { VisibilityOff, Visibility } from '@mui/icons-material'
 
 type Inputs = {
   password: string,
@@ -23,6 +24,9 @@ export default function UpdatePassword() {
   const route = useRouter()
 
   const { register, handleSubmit } = useForm<Inputs>()
+
+  const [showPassword, setShowPassword] = React.useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false)
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
@@ -58,6 +62,8 @@ export default function UpdatePassword() {
     }
   }
 
+  const handleClickShowPassword = (setState: React.Dispatch<React.SetStateAction<boolean>>) => setState((oldState) => !oldState)
+
   return (
     <>
       <Grid container direction={'column'} className='home' sx={{height: '100vh', justifyContent: 'center', alignItems: 'center'}}>
@@ -72,9 +78,48 @@ export default function UpdatePassword() {
                 Insira sua nova senha no campo abaixo
               </Typography>
 
-              <TextField label="Senha" variant="filled" sx={{width: '100%', mb: '20px'}} {...register('password')} />
-
-              <TextField label="Confirmar senha" variant="filled" sx={{width: '100%', mb: '20px'}} {...register('confirmPassword')} />
+              <Grid container alignItems={'center'} justifyContent={'center'} sx={{mb: '20px', gap: '10px'}}>
+                <FormControl variant="outlined" >
+                  <InputLabel htmlFor="outlined-adornment-password">Senha</InputLabel>
+                  <OutlinedInput
+                    id="outlined-adornment-password"
+                    type={showPassword ? 'text' : 'password'}
+                    {...register('password')}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={() => handleClickShowPassword(setShowPassword)}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                    label="Password"
+                  />
+                </FormControl>
+                <FormControl variant="outlined" >
+                  <InputLabel htmlFor="outlined-adornment-password">Confirmar senha</InputLabel>
+                  <OutlinedInput
+                    id="outlined-adornment-password"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    {...register('confirmPassword')}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={() => handleClickShowPassword(setShowConfirmPassword)}
+                          edge="end"
+                        >
+                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                    label="Password"
+                  />
+                </FormControl>
+              </Grid>
 
               <Button type='submit' variant='contained' sx={{width: '100%', mb: '15px'}}>Alterar senha</Button>
             </form>
