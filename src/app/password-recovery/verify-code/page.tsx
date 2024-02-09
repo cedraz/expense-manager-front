@@ -63,7 +63,7 @@ export default function VerifyCode() {
               </Typography>
 
               <Typography variant='subtitle2' sx={{mb: '15px', textAlign: 'center'}}>
-              (o código possue um tempo de expiração de 5 minutos)
+              (o código possui um tempo de expiração de 5 minutos)
               </Typography>
             
               <TextField sx={{width: '100%', mb: '15px'}} id="outlined-basic" label="Código" variant="outlined" {...register('code')} />
