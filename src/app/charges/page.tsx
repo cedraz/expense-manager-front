@@ -294,6 +294,7 @@ export default function Charges() {
                     </Grid>
                     <Grid item container direction={'row'} xs={6} sx={{pr: '10px', overflow: 'hidden'}}>
                       <Checkbox  
+                        sx={{p: '0'}}
                         checked={charge.selected}
                         onChange={() => handleCheckboxChange(charge.id, !charge.selected)
                         }/>

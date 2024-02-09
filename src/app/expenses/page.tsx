@@ -270,28 +270,32 @@ export default function Expenses() {
         amount: newAmount
       })
 
-      setCreditCards((prevCreditCards) => {
-        return prevCreditCards.map((creditCard) => {
-          if (creditCard.id === creditCardId) {
-            const updatedExpenses = creditCard.Expenses.map((expense) => {
-              if (expense.id === newExpense.id) {
-                return newExpense
-              }
-              return expense
-            })
-      
-            const updatedStatement = updatedExpenses.reduce((total, expense) => total + expense.amount, 0)
-      
-            return {
-              ...creditCard,
-              Expenses: updatedExpenses,
-              statement: updatedStatement,
+      const newCreditCards = creditCards.map((creditCard) => {
+        if (creditCard.id === creditCardId) {
+          const updatedExpenses = creditCard.Expenses.map((expense) => {
+            if (expense.id === newExpense.id) {
+              return newExpense
             }
+            return expense
+          })
+    
+          const updatedStatement = updatedExpenses.reduce((total, expense) => total + expense.amount, 0)
+    
+          return {
+            ...creditCard,
+            Expenses: updatedExpenses,
+            statement: updatedStatement,
           }
-          return creditCard
-        })
+        }
+        
+        return creditCard
       })
 
+      setCreditCards(newCreditCards)
+
+      const totalStatement = newCreditCards.reduce((acc, creditCard) => acc + creditCard.statement, 0)
+
+      setStatement(totalStatement)
       setSelectedExpenseId(null)
       setNewExpenseDescription('')
       setNewExpenseAmount('')
