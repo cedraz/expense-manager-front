@@ -5,9 +5,6 @@ import * as React from 'react'
 import { Box, Button, Grid, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 
-// Components
-import Title from '../components/title/title'
-
 export default function Home() {
   const theme = useTheme()
 
